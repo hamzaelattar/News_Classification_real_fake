@@ -142,8 +142,9 @@ def _make_loaders(train, validation, test, tokenizer, config, libraries):
         dataset_class(frame, tokenizer, config.max_length) for frame in (train, validation, test)
     ]
     train_loader = loader_class(datasets[0], shuffle=True, **options)
-    eval_loaders = [loader_class(dataset, shuffle=False, **options) for dataset in datasets]
-    return train_loader, *eval_loaders
+    validation_loader = loader_class(datasets[1], shuffle=False, **options)
+    test_loader = loader_class(datasets[2], shuffle=False, **options)
+    return train_loader, validation_loader, test_loader
 
 
 def _evaluate_sequence_model(model, loader, criterion, device, torch):
@@ -225,7 +226,7 @@ def fine_tune_deberta(
     )
 
     loaders = _make_loaders(train, validation, test, tokenizer, config, libraries)
-    train_loader, train_eval_loader, validation_loader, test_loader = loaders
+    train_loader, validation_loader, test_loader = loaders
     criterion = torch.nn.CrossEntropyLoss(label_smoothing=config.label_smoothing)
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -298,7 +299,6 @@ def fine_tune_deberta(
         weights_only=True,
     )
     model.load_state_dict(best_weights)
-    _evaluate_sequence_model(model, train_eval_loader, criterion, device, torch)
     test_started = perf_counter()
     test_evaluation = _evaluate_sequence_model(model, test_loader, criterion, device, torch)
     test_seconds = perf_counter() - test_started

@@ -329,6 +329,17 @@ cells = [
             pd.Series(deberta_metrics, name="test").to_frame().round(4)
         """
     ),
+    code(
+        """
+        if RUN_FROZEN_DEBERTA:
+            import gc
+
+            encoder.model.to("cpu")
+            encoder.torch.cuda.empty_cache()
+            del encoder, train_embeddings, validation_embeddings, test_embeddings
+            gc.collect()
+        """
+    ),
     markdown("### 7.2 Fine-tuning complet de DeBERTa"),
     markdown(
         """
@@ -379,6 +390,20 @@ cells = [
             axes[1].set(title="Learning rate", xlabel="Batch", ylabel="Learning rate")
             plt.tight_layout()
             plt.show()
+        """
+    ),
+    code(
+        """
+        if RUN_DEBERTA_FINETUNING:
+            import gc
+
+            import torch
+
+            fine_tune_result.model.to("cpu")
+            fine_tune_result.model = None
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            gc.collect()
         """
     ),
     markdown("### 7.3 Qwen2.5-1.5B-Instruct en zero-shot"),

@@ -39,7 +39,7 @@ packages = ["src/news_classification"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-extend-exclude = ["artifacts", "tp01-llm (2).ipynb"]
+extend-exclude = ["artifacts", "tp01-llm (2).ipynb", "kaggle_session.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

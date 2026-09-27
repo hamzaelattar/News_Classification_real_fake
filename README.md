@@ -54,16 +54,39 @@ uv run jupyter nbconvert --to notebook --execute LLM.ipynb \
 
 ## Exécution avec Docker
 
+Le lanceur construit l'image, teste si CUDA est accessible dans Docker, puis choisit automatiquement
+le GPU ou le CPU. Dans les deux cas, les expériences DeBERTa et Qwen restent activées.
+
+Sous Windows PowerShell :
+
 ```bash
-docker compose up --build
+powershell -ExecutionPolicy Bypass -File .\run-docker.ps1
 ```
 
-Ouvrez ensuite <http://localhost:8888>. Le conteneur exécute par défaut la partie principale sans
-les dépendances DeBERTa.
+Sous Linux :
 
-Pour construire également les dépendances DeBERTa, remplacez `UV_SYNC_EXTRAS: ""` par
-`UV_SYNC_EXTRAS: "--extra transformers"`, puis activez l'expérience voulue dans `compose.yaml`.
-Sans GPU NVIDIA configuré pour Docker, ces sections seront beaucoup plus lentes.
+```bash
+sh run-docker.sh
+```
+
+Ouvrez ensuite <http://localhost:8888> et exécutez toutes les cellules de `LLM.ipynb`.
+
+Le conteneur installe Python, uv, Jupyter, PyTorch, Transformers et toutes les autres dépendances.
+Si un GPU NVIDIA compatible est accessible, PyTorch utilise CUDA. Sinon, le même code continue sur
+CPU sans être désactivé.
+
+> **Attention :** le fine-tuning DeBERTa et Qwen sont très lourds. Sur CPU, l'exécution peut prendre
+> plusieurs heures, mais elle ne sera pas interrompue par le projet.
+
+Commandes manuelles équivalentes :
+
+```bash
+# CPU
+docker compose up --build
+
+# GPU NVIDIA
+docker compose -f compose.yaml -f compose.gpu.yaml up --build
+```
 
 ## Qualité du code
 

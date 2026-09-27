@@ -14,11 +14,10 @@ WORKDIR /app
 COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 
-ARG UV_SYNC_EXTRAS=""
-RUN uv sync --frozen --no-dev ${UV_SYNC_EXTRAS}
+RUN uv sync --frozen --no-dev --extra transformers
 
 COPY . .
 
 EXPOSE 8888
 
-CMD ["uv", "run", "--frozen", "jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.token=", "--ServerApp.password="]
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.token=", "--ServerApp.password="]
