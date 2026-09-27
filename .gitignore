@@ -5,6 +5,5 @@ __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
 tp01-llm (2).ipynb
-kaggle_session.ipynb
 artifacts/*
 !artifacts/.gitkeep
