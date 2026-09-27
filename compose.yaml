@@ -1,0 +1,30 @@
+services:
+  notebook:
+    build:
+      context: .
+      args:
+        UV_SYNC_EXTRAS: ""
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/app
+      - news-classification-venv:/opt/venv
+    environment:
+      RUN_FROZEN_DEBERTA: "0"
+      RUN_DEBERTA_FINETUNING: "0"
+      RUN_QWEN_ZERO_SHOT: "0"
+    command:
+      - uv
+      - run
+      - --frozen
+      - jupyter
+      - lab
+      - --ip=0.0.0.0
+      - --port=8888
+      - --no-browser
+      - --allow-root
+      - --ServerApp.token=
+      - --ServerApp.password=
+
+volumes:
+  news-classification-venv:
